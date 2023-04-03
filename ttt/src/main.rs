@@ -1,4 +1,5 @@
 use std::io;
+use std::process::Command;
 
 fn print_board(board: &[[char; 3]; 3]) {
     println!("-------------");
@@ -65,6 +66,10 @@ fn main() {
         } else {
             println!("That space is already taken.");
         }
-       
+        if cfg!(target_os = "windows") {
+            Command::new("cls").status().unwrap();
+        } else {
+            Command::new("clear").status().unwrap();
+        };
     }
 }
