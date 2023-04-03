@@ -1,4 +1,5 @@
 use std::io;
+use std::process::Command;
 
 fn print_board(board: &[[char; 3]; 3]) {
     println!("-------------");
@@ -31,10 +32,18 @@ fn main() {
     let mut player = 'X';
     loop {
         print_board(&board);
-        println!("{}'s turn. Enter row and column separated by space (e.g. '1 2'): ", player);
+        println!(
+            "{}'s turn. Enter row and column separated by space (e.g. '1 2'): ",
+            player
+        );
         let mut input = String::new();
-        io::stdin().read_line(&mut input).expect("Failed to read line.");
-        let coords: Vec<usize> = input.split_whitespace().map(|s| s.parse().unwrap()).collect();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line.");
+        let coords: Vec<usize> = input
+            .split_whitespace()
+            .map(|s| s.parse().unwrap())
+            .collect();
         let row = coords[0] - 1;
         let col = coords[1] - 1;
         if board[row][col] == ' ' {
@@ -44,7 +53,7 @@ fn main() {
                     print_board(&board);
                     println!("{} wins!", winner);
                     break;
-                },
+                }
                 None => {
                     if board.iter().all(|row| row.iter().all(|&cell| cell != ' ')) {
                         print_board(&board);
@@ -52,10 +61,15 @@ fn main() {
                         break;
                     }
                     player = if player == 'X' { 'O' } else { 'X' };
-                },
+                }
             }
         } else {
             println!("That space is already taken.");
         }
+        if cfg!(target_os = "windows") {
+            Command::new("cls").status().unwrap();
+        } else {
+            Command::new("clear").status().unwrap();
+        };
     }
 }
